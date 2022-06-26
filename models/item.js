@@ -4,12 +4,12 @@ var Schema = mongoose.Schema;
 var ItemSchema = new Schema({
   name: { type: String, required: true, maxlength: 100 },
   description: { type: String, required: true },
-  price: { type: Int32Array, required: true },
-  number_in_stock: { type: Int32Array, required: true },
-  category_id: [
+  price: { type: Number, required: true },
+  number_in_stock: { type: Number, required: true },
+  category: [
     { type: Schema.Types.ObjectId, ref: 'Category', required: true },
   ],
-  supplier_id: { type: Schema.Types.ObjectId, ref: 'Supplier', required: true },
+  supplier: { type: Schema.Types.ObjectId, ref: 'Supplier', required: true },
 });
 
 ItemSchema.virtual('url').get(function () {
