@@ -26,4 +26,9 @@ body {
 
 .list-link {
   color: #64748c;
+  text-decoration-line: none;
+}
+
+p {
+  font-size: large;
 }

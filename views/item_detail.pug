@@ -1,0 +1,19 @@
+extends layout 
+
+block content 
+  div(class='container-fluid bg-light content-container')
+    div(class='row')
+      div(class='col-sm-8 content')
+        h1 #{item.name}
+        p #[strong Supplier:]
+          a(href=item.supplier.url, class='list-link')  #{item.supplier.name}
+        p #[strong Description:] #{item.description}
+        p #[strong Price:] #{item.price}
+        p #[strong In Stock:] #{item.number_in_stock}
+
+        p #[strong Category:]
+        each val, index in item.category
+          p
+            a(href=val.url, class='list-link') #{val.name}
+          if index < item.category.length - 1
+            |,
