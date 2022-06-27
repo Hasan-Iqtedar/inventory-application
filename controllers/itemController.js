@@ -4,7 +4,30 @@ var Categories = require('../models/category');
 var Suppliers = require('../models/supplier');
 
 exports.index = function (req, res, next) {
-  res.send('Not Implemented: Home Page')
+  async.parallel(
+    {
+      items: function (callback) {
+        Items.countDocuments({}, callback);
+      },
+      categories: function (callback) {
+        Categories.countDocuments({}, callback);
+      },
+      suppliers: function (callback) {
+        Suppliers.countDocuments({}, callback);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      res.render('index', {
+        title: 'Inventory Application',
+        total_items: results.items,
+        total_categories: results.categories,
+        total_suppliers: results.suppliers,
+      });
+    }
+  );
 };
 
 exports.itemList = function (req, res, next) {
