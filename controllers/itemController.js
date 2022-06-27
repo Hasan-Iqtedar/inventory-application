@@ -31,7 +31,18 @@ exports.index = function (req, res, next) {
 };
 
 exports.itemList = function (req, res, next) {
-  res.send('Not Implemented: Items List');
+  Items.find({})
+    .populate('category')
+    .populate('supplier')
+    .sort({ name: 1 })
+    .exec(function (err, result) {
+      if (err) {
+        return next(err);
+      }
+      res.render('item_list', { title: 'Items', items_list: result });
+    });
+
+  // res.send('Not Implemented: Items List');
 };
 
 exports.itemDetail = function (req, res, next) {
