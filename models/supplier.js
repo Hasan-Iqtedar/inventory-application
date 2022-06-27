@@ -7,7 +7,7 @@ var SupplierSchema = new Schema({
 });
 
 SupplierSchema.virtual('url').get(function () {
-  return '/groceries/supplier' + this._id;
+  return '/groceries/supplier/' + this._id;
 });
 
 module.exports = mongoose.model('Supplier', SupplierSchema);
