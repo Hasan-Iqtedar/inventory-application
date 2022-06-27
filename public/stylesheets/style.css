@@ -22,5 +22,8 @@ body {
 .list-item {
   margin-top: 10px;
   font-size: larger;
+}
 
+.list-link {
+  color: #64748c;
 }
