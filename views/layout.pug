@@ -9,15 +9,17 @@ html(lang='en')
     link(rel='stylesheet' href='/stylesheets/style.css')
 
   body
-    div(class='container-fluid', id='nav-container')
+    div(class='container-fluid' id='nav-container')
       nav(class='navbar navbar-expand-sm navbar-dark bg-dark')
-        ul(class='navbar-nav', id='nav-bar')
+        ul(class='navbar-nav' id='nav-bar')
           a(class="navbar-brand") Groceries
           li(class='nav-item')
-            a(class='nav-link', href='/groceries/items') Items
+            a(class='nav-link' href='/groceries') Home
           li(class='nav-item')
-            a(class='nav-link', href='/groceries/categories') Categories
+            a(class='nav-link' href='/groceries/items') Items
           li(class='nav-item')
-            a(class='nav-link', href='/groceries/suppliers') Suppliers
+            a(class='nav-link' href='/groceries/categories') Categories
+          li(class='nav-item')
+            a(class='nav-link' href='/groceries/suppliers') Suppliers
 
     block content
