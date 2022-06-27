@@ -45,3 +45,5 @@ router.post('/supplier/:id/delete', supplierController.supplierDeletePost);
 
 router.get('/supplier/:id', supplierController.supplierDetail);
 router.get('/suppliers', supplierController.supplierList);
+
+module.exports = router;
