@@ -32,8 +32,6 @@ exports.index = function (req, res, next) {
 
 exports.itemList = function (req, res, next) {
   Items.find({})
-    .populate('category')
-    .populate('supplier')
     .sort({ name: 1 })
     .exec(function (err, result) {
       if (err) {
@@ -46,7 +44,21 @@ exports.itemList = function (req, res, next) {
 };
 
 exports.itemDetail = function (req, res, next) {
-  res.send('Not Implemented: Item Detail: ' + req.params.id);
+  Items.findById(req.params.id)
+    .populate('category')
+    .populate('supplier')
+    .exec(function (err, result) {
+      if (err) {
+        return next(err);
+      }
+      //No results.
+      if (result == null) {
+        var error = new Error('Item not found');
+        err.status = 404;
+        return next(error);
+      }
+      res.render('item_detail', { title: 'Item Detail', item: result });
+    });
 };
 
 exports.itemCreateGet = function (req, res, next) {
