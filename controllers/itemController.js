@@ -150,6 +150,7 @@ exports.itemCreatePost = [
             categories: results.categories,
             errors: errors.array(),
           });
+          return;
         }
       );
     } else {
@@ -275,6 +276,7 @@ exports.itemUpdatePost = [
           });
         }
       );
+      return;
     } else {
       Item.findByIdAndUpdate(
         req.params.id,
