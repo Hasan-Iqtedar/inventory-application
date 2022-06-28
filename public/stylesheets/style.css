@@ -32,3 +32,14 @@ body {
 p {
   font-size: large;
 }
+
+label {
+  font-size: medium;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.submit-btn {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
