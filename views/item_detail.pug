@@ -13,7 +13,6 @@ block content
 
         p #[strong Category:]
         each val, index in item.category
-          p
-            a(href=val.url, class='list-link') #{val.name}
+          a(href=val.url, class='list-link') #{val.name}
           if index < item.category.length - 1
-            |,
+            |, 
