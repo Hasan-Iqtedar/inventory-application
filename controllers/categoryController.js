@@ -1,5 +1,20 @@
+var async = require('async');
+var { body, validationResult } = require('express-validator');
+var Category = require('../models/category');
+
 exports.categoryList = function (req, res, next) {
-  res.send('Not Implemented: Category List');
+  // res.send('Not Implemented: Category List');
+  Category.find({})
+    .sort({ name: 1 })
+    .exec(function (err, result) {
+      if (err) {
+        return next(err);
+      }
+      res.render('category_list', {
+        title: 'Categories',
+        category_list: result,
+      });
+    });
 };
 
 exports.categoryDetail = function (req, res, next) {
