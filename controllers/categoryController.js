@@ -46,12 +46,49 @@ exports.categoryDetail = function (req, res, next) {
 };
 
 exports.categoryCreateGet = function (req, res, next) {
-  res.send('Not Implemented: category Create Post');
+  res.render('category_form', { title: 'Create Category' });
 };
 
-exports.categoryCreatePost = function (req, res, next) {
-  res.send('Not Implemented: category Create Post');
-};
+exports.categoryCreatePost = [
+  body('name', 'Please provide name').trim().isLength({ min: 1 }).escape(),
+  body('description', 'Please provide description')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+    var category = new Category({
+      name: req.body.name,
+      description: req.body.description,
+    });
+
+    if (!errors.isEmpty()) {
+      res.render('category_form', {
+        title: 'Create Category',
+        category: category,
+      });
+      return;
+    } else {
+      Category.findOne({ name: category.name }).exec(function (err, result) {
+        if (err) {
+          return next(err);
+        }
+        if (result) {
+          res.redirect(result.url);
+        } else {
+          category.save(function (err) {
+            if (err) {
+              return next(err);
+            }
+            res.redirect(category.url);
+          });
+        }
+      });
+    }
+  },
+];
 
 exports.categoryUpdateGet = function (req, res, next) {
   res.send('Not Implemented: category Update Post: ' + req.params.id);
