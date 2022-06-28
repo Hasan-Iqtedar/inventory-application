@@ -184,6 +184,11 @@ exports.itemUpdateGet = function (req, res, next) {
       if (err) {
         return next(err);
       }
+      if (results.item == null) {
+        var err = new Error('Item not found');
+        err.status = 404;
+        return next(err);
+      }
       for (let i = 0; i < results.categories.length; i++) {
         for (let j = 0; j < results.item.category.length; j++) {
           if (
@@ -293,9 +298,25 @@ exports.itemUpdatePost = [
 ];
 
 exports.itemDeleteGet = function (req, res, next) {
-  res.send('Not Implemented: Item Delete Post: ' + req.params.id);
+  // res.send('Not Implemented: Item Delete Post: ' + req.params.id);
+  Items.findById(req.params.id).exec(function (err, result) {
+    if (err) {
+      return next(err);
+    }
+    if (result == null) {
+      res.redirect('/groceries/items');
+      return;
+    }
+    res.render('item_delete', { title: 'Delete Item', item: result });
+  });
 };
 
 exports.itemDeletePost = function (req, res, next) {
-  res.send('Not Implemented: Item Delete Post: ' + req.params.id);
+  // res.send('Not Implemented: Item Delete Post: ' + req.params.id);
+  Items.findByIdAndRemove(req.body.itemId, function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect('/groceries/items');
+  });
 };
