@@ -1,20 +1,20 @@
 var async = require('async');
-var Items = require('../models/item');
-var Categories = require('../models/category');
-var Suppliers = require('../models/supplier');
+var Item = require('../models/item');
+var Category = require('../models/category');
+var Supplier = require('../models/supplier');
 var { body, validationResult } = require('express-validator');
 
 exports.index = function (req, res, next) {
   async.parallel(
     {
       items: function (callback) {
-        Items.countDocuments({}, callback);
+        Item.countDocuments({}, callback);
       },
       categories: function (callback) {
-        Categories.countDocuments({}, callback);
+        Category.countDocuments({}, callback);
       },
       suppliers: function (callback) {
-        Suppliers.countDocuments({}, callback);
+        Supplier.countDocuments({}, callback);
       },
     },
     function (err, results) {
@@ -32,7 +32,7 @@ exports.index = function (req, res, next) {
 };
 
 exports.itemList = function (req, res, next) {
-  Items.find({})
+  Item.find({})
     .sort({ name: 1 })
     .exec(function (err, result) {
       if (err) {
@@ -43,7 +43,7 @@ exports.itemList = function (req, res, next) {
 };
 
 exports.itemDetail = function (req, res, next) {
-  Items.findById(req.params.id)
+  Item.findById(req.params.id)
     .populate('category')
     .populate('supplier')
     .exec(function (err, result) {
@@ -64,10 +64,10 @@ exports.itemCreateGet = function (req, res, next) {
   async.parallel(
     {
       suppliers: function (callback) {
-        Suppliers.find({}).sort({ name: 1 }).exec(callback);
+        Supplier.find({}).sort({ name: 1 }).exec(callback);
       },
       categories: function (callback) {
-        Categories.find({}).sort({ name: 1 }).exec(callback);
+        Category.find({}).sort({ name: 1 }).exec(callback);
       },
     },
     function (err, results) {
@@ -115,7 +115,7 @@ exports.itemCreatePost = [
   (req, res, next) => {
     const errors = validationResult(req);
 
-    var item = new Items({
+    var item = new Item({
       name: req.body.name,
       description: req.body.description,
       price: req.body.price,
@@ -128,10 +128,10 @@ exports.itemCreatePost = [
       async.parallel(
         {
           suppliers: function (callback) {
-            Suppliers.find({}).sort({ name: 1 }).exec(callback);
+            Supplier.find({}).sort({ name: 1 }).exec(callback);
           },
           categories: function (callback) {
-            Categories.find({}).sort({ name: 1 }).exec(callback);
+            Category.find({}).sort({ name: 1 }).exec(callback);
           },
         },
         function (err, results) {
@@ -167,13 +167,13 @@ exports.itemUpdateGet = function (req, res, next) {
   async.parallel(
     {
       item: function (callback) {
-        Items.findById(req.params.id).exec(callback);
+        Item.findById(req.params.id).exec(callback);
       },
       suppliers: function (callback) {
-        Suppliers.find({}).sort({ name: 1 }).exec(callback);
+        Supplier.find({}).sort({ name: 1 }).exec(callback);
       },
       categories: function (callback) {
-        Categories.find({}).sort({ name: 1 }).exec(callback);
+        Category.find({}).sort({ name: 1 }).exec(callback);
       },
     },
     function (err, results) {
@@ -237,7 +237,7 @@ exports.itemUpdatePost = [
   (req, res, next) => {
     const errors = validationResult(req);
 
-    var item = new Items({
+    var item = new Item({
       _id: req.params.id,
       name: req.body.name,
       description: req.body.description,
@@ -251,10 +251,10 @@ exports.itemUpdatePost = [
       async.parallel(
         {
           suppliers: function (callback) {
-            Suppliers.find({}).sort({ name: 1 }).exec(callback);
+            Supplier.find({}).sort({ name: 1 }).exec(callback);
           },
           categories: function (callback) {
-            Categories.find({}).sort({ name: 1 }).exec(callback);
+            Category.find({}).sort({ name: 1 }).exec(callback);
           },
         },
         function (err, results) {
@@ -276,7 +276,7 @@ exports.itemUpdatePost = [
         }
       );
     } else {
-      Items.findByIdAndUpdate(
+      Item.findByIdAndUpdate(
         req.params.id,
         item,
         {},
@@ -292,7 +292,7 @@ exports.itemUpdatePost = [
 ];
 
 exports.itemDeleteGet = function (req, res, next) {
-  Items.findById(req.params.id).exec(function (err, result) {
+  Item.findById(req.params.id).exec(function (err, result) {
     if (err) {
       return next(err);
     }
@@ -305,7 +305,7 @@ exports.itemDeleteGet = function (req, res, next) {
 };
 
 exports.itemDeletePost = function (req, res, next) {
-  Items.findByIdAndRemove(req.body.itemId, function (err) {
+  Item.findByIdAndRemove(req.body.itemId, function (err) {
     if (err) {
       return next(err);
     }
