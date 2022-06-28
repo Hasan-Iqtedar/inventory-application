@@ -40,8 +40,6 @@ exports.itemList = function (req, res, next) {
       }
       res.render('item_list', { title: 'Items', items_list: result });
     });
-
-  // res.send('Not Implemented: Items List');
 };
 
 exports.itemDetail = function (req, res, next) {
@@ -63,7 +61,6 @@ exports.itemDetail = function (req, res, next) {
 };
 
 exports.itemCreateGet = function (req, res, next) {
-  // res.send('Not Implemented: Item Create Post');
   async.parallel(
     {
       suppliers: function (callback) {
@@ -167,7 +164,6 @@ exports.itemCreatePost = [
 ];
 
 exports.itemUpdateGet = function (req, res, next) {
-  // res.send('Not Implemented: Item Update Post: ' + req.params.id);
   async.parallel(
     {
       item: function (callback) {
@@ -200,7 +196,7 @@ exports.itemUpdateGet = function (req, res, next) {
         }
       }
       res.render('item_form', {
-        title: 'Create Item',
+        title: 'Update Item',
         item: results.item,
         suppliers: results.suppliers,
         categories: results.categories,
@@ -210,8 +206,6 @@ exports.itemUpdateGet = function (req, res, next) {
 };
 
 exports.itemUpdatePost = [
-  // res.send('Not Implemented: Item Update Post: ' + req.params.id);
-
   //Converting category into array.
   (req, res, next) => {
     if (!req.body.category instanceof Array) {
@@ -273,7 +267,7 @@ exports.itemUpdatePost = [
             }
           }
           res.render('item_form', {
-            title: 'Create Item',
+            title: 'Update Item',
             item: item,
             suppliers: results.suppliers,
             categories: results.categories,
@@ -298,7 +292,6 @@ exports.itemUpdatePost = [
 ];
 
 exports.itemDeleteGet = function (req, res, next) {
-  // res.send('Not Implemented: Item Delete Post: ' + req.params.id);
   Items.findById(req.params.id).exec(function (err, result) {
     if (err) {
       return next(err);
@@ -312,7 +305,6 @@ exports.itemDeleteGet = function (req, res, next) {
 };
 
 exports.itemDeletePost = function (req, res, next) {
-  // res.send('Not Implemented: Item Delete Post: ' + req.params.id);
   Items.findByIdAndRemove(req.body.itemId, function (err) {
     if (err) {
       return next(err);
