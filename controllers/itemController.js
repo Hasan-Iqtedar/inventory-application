@@ -64,7 +64,6 @@ exports.itemDetail = function (req, res, next) {
 
 exports.itemCreateGet = function (req, res, next) {
   // res.send('Not Implemented: Item Create Post');
-
   async.parallel(
     {
       suppliers: function (callback) {
@@ -168,12 +167,130 @@ exports.itemCreatePost = [
 ];
 
 exports.itemUpdateGet = function (req, res, next) {
-  res.send('Not Implemented: Item Update Post: ' + req.params.id);
+  // res.send('Not Implemented: Item Update Post: ' + req.params.id);
+  async.parallel(
+    {
+      item: function (callback) {
+        Items.findById(req.params.id).exec(callback);
+      },
+      suppliers: function (callback) {
+        Suppliers.find({}).sort({ name: 1 }).exec(callback);
+      },
+      categories: function (callback) {
+        Categories.find({}).sort({ name: 1 }).exec(callback);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      for (let i = 0; i < results.categories.length; i++) {
+        for (let j = 0; j < results.item.category.length; j++) {
+          if (
+            results.categories[i]._id.toString() ===
+            results.item.category[j]._id.toString()
+          ) {
+            results.categories[i].checked = 'true';
+          }
+        }
+      }
+      res.render('item_form', {
+        title: 'Create Item',
+        item: results.item,
+        suppliers: results.suppliers,
+        categories: results.categories,
+      });
+    }
+  );
 };
 
-exports.itemUpdatePost = function (req, res, next) {
-  res.send('Not Implemented: Item Update Post: ' + req.params.id);
-};
+exports.itemUpdatePost = [
+  // res.send('Not Implemented: Item Update Post: ' + req.params.id);
+
+  //Converting category into array.
+  (req, res, next) => {
+    if (!req.body.category instanceof Array) {
+      if (typeof req.body.category === undefined) {
+        req.body.category = [];
+      } else {
+        req.body.category = new Array(req.body.category);
+      }
+    }
+    next();
+  },
+
+  body('name', 'Please provide name').trim().isLength({ min: 1 }).escape(),
+  body('supplier', 'Please provide suplier')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body('description', 'Please provide description')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body('price', 'Please provide price').trim().isLength({ min: 1 }).escape(),
+  body('number_in_stock', 'Please provide number in stock')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body('category.*').escape(),
+
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+    var item = new Items({
+      _id: req.params.id,
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price,
+      number_in_stock: req.body.number_in_stock,
+      category: req.body.category,
+      supplier: req.body.supplier,
+    });
+
+    if (!errors.isEmpty()) {
+      async.parallel(
+        {
+          suppliers: function (callback) {
+            Suppliers.find({}).sort({ name: 1 }).exec(callback);
+          },
+          categories: function (callback) {
+            Categories.find({}).sort({ name: 1 }).exec(callback);
+          },
+        },
+        function (err, results) {
+          if (err) {
+            return next(err);
+          }
+          for (let i = 0; i < results.categories.length; i++) {
+            if (item.category.indexOf(results.categories[i]._id) > -1) {
+              results.categories[i].checked = 'true';
+            }
+          }
+          res.render('item_form', {
+            title: 'Create Item',
+            item: item,
+            suppliers: results.suppliers,
+            categories: results.categories,
+            errors: errors.array(),
+          });
+        }
+      );
+    } else {
+      Items.findByIdAndUpdate(
+        req.params.id,
+        item,
+        {},
+        function (err, updatedItem) {
+          if (err) {
+            return next(err);
+          }
+          res.redirect(updatedItem.url);
+        }
+      );
+    }
+  },
+];
 
 exports.itemDeleteGet = function (req, res, next) {
   res.send('Not Implemented: Item Delete Post: ' + req.params.id);
