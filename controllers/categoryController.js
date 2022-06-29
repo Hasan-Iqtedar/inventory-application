@@ -68,6 +68,7 @@ exports.categoryCreatePost = [
       res.render('category_form', {
         title: 'Create Category',
         category: category,
+        errors: errors.array(),
       });
       return;
     } else {
@@ -91,12 +92,61 @@ exports.categoryCreatePost = [
 ];
 
 exports.categoryUpdateGet = function (req, res, next) {
-  res.send('Not Implemented: category Update Post: ' + req.params.id);
+  Category.findById(req.params.id).exec(function (err, result) {
+    if (err) {
+      return next(err);
+    }
+    res.render('category_form', { title: 'Update Category', category: result });
+  });
 };
 
-exports.categoryUpdatePost = function (req, res, next) {
-  res.send('Not Implemented: category Update Post: ' + req.params.id);
-};
+exports.categoryUpdatePost = [
+  body('name', 'Please provide name').trim().isLength({ min: 1 }).escape(),
+  body('description', 'Please provide description')
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+    var category = new Category({
+      _id: req.params.id,
+      name: req.body.name,
+      description: req.body.description,
+    });
+
+    if (!errors.isEmpty()) {
+      res.render('category_form', {
+        title: 'Update Category',
+        category: category,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      Category.findOne({ name: category.name }).exec(function (err, result) {
+        if (err) {
+          return next(err);
+        }
+        if (result) {
+          res.redirect(result.url);
+        } else {
+          Category.findByIdAndUpdate(
+            req.params.id,
+            category,
+            {},
+            function (err, updatedCategory) {
+              if (err) {
+                return next(err);
+              }
+              res.redirect(updatedCategory.url);
+            }
+          );
+        }
+      });
+    }
+  },
+];
 
 exports.categoryDeleteGet = function (req, res, next) {
   res.send('Not Implemented: category Delete Post: ' + req.params.id);
