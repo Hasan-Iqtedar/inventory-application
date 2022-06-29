@@ -18,7 +18,30 @@ exports.supplierList = function (req, res, next) {
 };
 
 exports.supplierDetail = function (req, res, next) {
-  res.send('Not Implemented: supplier Detail: ' + req.params.id);
+  async.parallel(
+    {
+      supplier: function (callback) {
+        Supplier.findById(req.params.id).exec(callback);
+      },
+      supplier_items: function (callback) {
+        Item.find({ supplier: req.params.id }).sort({ name: 1 }).exec(callback);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      if (results.supplier == null) {
+        var err = new Error('Supplier not found');
+        err.status = 404;
+        return next(err);
+      }
+      res.render('supplier_detail', {
+        supplier: results.supplier,
+        supplier_items: results.supplier_items,
+      });
+    }
+  );
 };
 
 exports.supplierCreateGet = function (req, res, next) {
