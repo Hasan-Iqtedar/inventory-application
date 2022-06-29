@@ -149,9 +149,40 @@ exports.categoryUpdatePost = [
 ];
 
 exports.categoryDeleteGet = function (req, res, next) {
-  res.send('Not Implemented: category Delete Post: ' + req.params.id);
+  async.parallel(
+    {
+      category: function (callback) {
+        Category.findById(req.params.id).exec(callback);
+      },
+      category_items: function (callback) {
+        Item.find({ category: { $elemMatch: { $eq: req.params.id } } })
+          .sort({ name: 1 })
+          .exec(callback);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      if (results.category == null) {
+        var error = new Error('Category not found');
+        error.status = 404;
+        return next(error);
+      }
+      res.render('category_delete', {
+        title: 'Delete Category',
+        category: results.category,
+        category_items: results.category_items,
+      });
+    }
+  );
 };
 
 exports.categoryDeletePost = function (req, res, next) {
-  res.send('Not Implemented: category Delete Post: ' + req.params.id);
+  Category.findByIdAndRemove(req.body.categoryId, function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect('/groceries/categories');
+  });
 };
