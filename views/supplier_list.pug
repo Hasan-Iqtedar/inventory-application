@@ -1,0 +1,17 @@
+extends layout 
+
+block content 
+  div(class='container-fluid bg-light content-container')
+    div(class='row')
+      div(class='col-sm-8 content')
+        h1 #{title}
+        p Manage your inventory items here.
+        ul 
+          each supplier in supplier_list 
+            li.list-item 
+              a(href=supplier.url, class='list-link') #{supplier.name}
+          else 
+            li.list-item There are no suppliers available. Add some!
+
+        p 
+          a(href='/groceries/supplier/create', class='list-link') Create New supplier
