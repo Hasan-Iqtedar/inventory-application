@@ -24,7 +24,9 @@ exports.categoryDetail = function (req, res, next) {
         Category.findById(req.params.id).exec(callback);
       },
       category_items: function (callback) {
-        Item.find({ category: req.params.id }).sort({ name: 1 }).exec(callback);
+        Item.find({ category: { $elemMatch: { $eq: req.params.id } } })
+          .sort({ name: 1 })
+          .exec(callback);
       },
     },
     function (err, results) {
