@@ -1,0 +1,24 @@
+extends layout 
+
+block content 
+  div(class='container-fluid bg-light content-container')
+    div(class='row')
+      div(class='col-sm-8 content')
+        h1 #{supplier.name}
+        p #[strong Description:] #{supplier.description}
+
+        h4 Items 
+
+        dl
+          for item in supplier_items
+            dt 
+              a(href=item.url, class='list-link') #{item.name}
+            dd #{item.description}
+          else 
+            p This supplier has no items.
+
+        hr
+        p 
+          a(href=supplier.url + '/delete', class='list-link') Delete Supplier
+        p 
+          a(href=supplier.url + '/update', class='list-link') Update Supplier
