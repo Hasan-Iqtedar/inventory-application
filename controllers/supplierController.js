@@ -1,5 +1,20 @@
+var async = require('async');
+var { body, validationResult } = require('express-validator');
+var Supplier = require('../models/supplier');
+var Item = require('../models/item');
+
 exports.supplierList = function (req, res, next) {
-  res.send('Not Implemented: suppliers List');
+  Supplier.find({})
+    .sort({ name: 1 })
+    .exec(function (err, result) {
+      if (err) {
+        return next(err);
+      }
+      res.render('supplier_list', {
+        title: 'Suppliers',
+        supplier_list: result,
+      });
+    });
 };
 
 exports.supplierDetail = function (req, res, next) {
