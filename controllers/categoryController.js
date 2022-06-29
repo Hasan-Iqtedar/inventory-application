@@ -4,7 +4,6 @@ var Category = require('../models/category');
 var Item = require('../models/item');
 
 exports.categoryList = function (req, res, next) {
-  // res.send('Not Implemented: Category List');
   Category.find({})
     .sort({ name: 1 })
     .exec(function (err, result) {
