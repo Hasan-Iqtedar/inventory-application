@@ -148,9 +148,38 @@ exports.supplierUpdatePost = [
 ];
 
 exports.supplierDeleteGet = function (req, res, next) {
-  res.send('Not Implemented: supplier Delete Post: ' + req.params.id);
+  async.parallel(
+    {
+      supplier: function (callback) {
+        Supplier.findById(req.params.id).exec(callback);
+      },
+      supplier_items: function (callback) {
+        Item.find({ supplier: req.params.id }).sort({ name: 1 }).exec(callback);
+      },
+    },
+    function (err, results) {
+      if (err) {
+        return next(err);
+      }
+      if (results.supplier == null) {
+        var error = new Error('Supplier not found');
+        error.status = 404;
+        return next(error);
+      }
+      res.render('supplier_delete', {
+        title: 'Delete Supplier',
+        supplier: results.supplier,
+        supplier_items: results.supplier_items,
+      });
+    }
+  );
 };
 
 exports.supplierDeletePost = function (req, res, next) {
-  res.send('Not Implemented: supplier Delete Post: ' + req.params.id);
+  Supplier.findByIdAndRemove(req.body.supplierId, function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect('/groceries/suppliers');
+  });
 };
